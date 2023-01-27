@@ -1,0 +1,1 @@
+nest g res users --no-spec  res api full option
