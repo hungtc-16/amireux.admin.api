@@ -27,4 +27,8 @@ export class UsersService {
 	async remove(id: string): Promise<void> {
 		await this.usersRepository.delete(id);
 	}
+
+	async findOneByRefreshToken(id: number, refresh_token: string ): Promise<User | undefined>  {
+		return await this.usersRepository.findOneBy({refresh_token: refresh_token});
+	}
 }

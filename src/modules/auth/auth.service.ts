@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AuthDto } from './dto/auth.dto';
@@ -20,6 +20,18 @@ export class AuthService {
     if (!user) throw new BadRequestException('User does not exist');
     if (user.password !== data.password)
       throw new BadRequestException('Password is incorrect');
+    const tokens = await this.getTokens(user.id, user.username);
+    this.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+  
+
+  async refreshToken(data: any) {
+    // Check if user exists
+    const user : User = await this.usersService.findOneByRefreshToken(data.id, data.refresh_token);
+    console.log(data, user)
+    if (!user) throw new BadRequestException('Token does not exist');
+
     const tokens = await this.getTokens(user.id, user.username);
     this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
